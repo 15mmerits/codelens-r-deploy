@@ -19,6 +19,12 @@ Supported languages include **Python, R, JavaScript, Java, and C++**.
 
 ---
 
+## Try the App Now 
+**You need Google Account only and it's Free to use**
+[@CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
+
+---
+
 # Why CodeLens Exists
 
 **70% of new programmers quit in their first year** because error messages feel cryptic.  
@@ -180,6 +186,9 @@ Add your screenshots in /screenshots/ and reference them:
 
 Coming soon — 
 
+## Try the App Now 
+**You need Google Account only and it's Free to use**
+[@CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
 
 ## Run Locally
 
