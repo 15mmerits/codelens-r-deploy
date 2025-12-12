@@ -1,5 +1,5 @@
 
-# CodeLens — AI Debugging That Actually Teaches  
+# CodeLens : AI Debugging That Actually Teaches  
 Turn confusing error messages into **visual learning experiences**.
 
 
@@ -7,6 +7,8 @@ Turn confusing error messages into **visual learning experiences**.
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/15mmerits/codelens-r-deploy/blob/main/screenshots/CodeLens_Blank_UI.png" />
 </div>
 
+
+---
 
 ## ⭐ Overview
 
@@ -182,13 +184,19 @@ Add your screenshots in /screenshots/ and reference them:
 ![Sandbox-Test](https://github.com/15mmerits/codelens-r-deploy/blob/main/screenshots/CodeLens_Sandboxed-Test_Result.png)
 
 
+---
+
 🎬 Demo Video
 
 Coming soon — 
 
+---
+
 ## Try the App Now 
 **You need Google Account only and it's Free to use**
 [@CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
+
+---
 
 ## Run Locally
 
@@ -201,10 +209,13 @@ Coming soon —
    `npm run dev`
 
 
+---
 
 📄 License
 
 MIT License — feel free to modify, share, and build on top of CodeLens.
+
+---
 
 👨‍💻 Author
 
@@ -224,10 +235,11 @@ Kaggle: [godofoutcasts](https://kaggle.com/godofoutcasts)
 
 Built with ❤️ for every programmer who ever felt stuck.
 
+---
 
 <div align="center">
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-
+---
 
