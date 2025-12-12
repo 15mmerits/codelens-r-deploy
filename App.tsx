@@ -34,7 +34,7 @@ const App: React.FC = () => {
   const [code, setCode] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [language, setLanguage] = useState<Language>('unknown');
+  const [language, setLanguage] = useState<Language>('Auto-detect');
   const [mode, setMode] = useState<ExplanationMode>('beginner');
   const [isExampleActive, setIsExampleActive] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -67,6 +67,7 @@ const App: React.FC = () => {
   // State: History & Tabs
   // Lazy init for history
   const [history, setHistory] = useState<Array<{code: string, result: AnalysisResult, timestamp: number}>>(() => {
+    if (typeof window === 'undefined') return [];
     const saved = localStorage.getItem('codelens-history');
     if (saved) {
       try {
@@ -101,9 +102,6 @@ const App: React.FC = () => {
     
     const savedReasoning = localStorage.getItem('codelens-reasoning');
     if (savedReasoning !== null) setShowReasoningSteps(savedReasoning === 'true');
-
-    // Note: startInFullscreen is handled via lazy useState init
-    // Note: history is handled via lazy useState init
   }, []);
   
   useEffect(() => {
@@ -123,6 +121,15 @@ const App: React.FC = () => {
     localStorage.setItem('codelens-reasoning', String(showReasoningSteps));
     localStorage.setItem('codelens-fullscreen', String(startInFullscreen));
   }, [autoScroll, showDetailedTraces, collapsePracticeByDefault, showReasoningSteps, startInFullscreen]);
+  
+  // Persist History via useEffect for robustness
+  useEffect(() => {
+    try {
+      localStorage.setItem('codelens-history', JSON.stringify(history));
+    } catch (e) {
+      console.error("Failed to save history:", e);
+    }
+  }, [history]);
 
   // Handle Fullscreen Logic
   useEffect(() => {
@@ -135,10 +142,8 @@ const App: React.FC = () => {
         }
       };
 
-      // Try immediately (might fail without user gesture)
       enterFullscreen();
 
-      // Attach one-time listener for first interaction to trigger fullscreen
       const handleInteraction = () => {
         enterFullscreen();
         window.removeEventListener('click', handleInteraction);
@@ -156,7 +161,6 @@ const App: React.FC = () => {
         window.removeEventListener('keydown', handleInteraction);
       };
     } else {
-       // Optional: Exit fullscreen if setting is toggled off
        if (document.fullscreenElement && document.exitFullscreen) {
          document.exitFullscreen().catch(err => console.log(err));
        }
@@ -187,7 +191,6 @@ const App: React.FC = () => {
   
   // Responsive check
   useEffect(() => {
-    // Matches the lg:flex-row breakpoint (1024px) in the main layout
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -202,16 +205,58 @@ const App: React.FC = () => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   };
+
+  // Helper for basic client-side language detection
+  const detectLanguage = (text: string): Language | null => {
+    const t = text.trim();
+    if (t.length < 15) return null; // Too short to be sure
+
+    // C++
+    if (/#include\s+<|std::cout|using\s+namespace\s+std|int\s+main\s*\(/.test(text)) return 'C++';
+    
+    // Java
+    if (/public\s+class|public\s+static\s+void\s+main|System\.out\.println|import\s+java\./.test(text)) return 'Java';
+    
+    // R
+    if (/<-|library\(|ggplot\(|%>%\s/.test(text)) return 'R';
+    
+    // Python
+    if (/def\s+\w+\s*\(.*?\):|if\s+__name__\s*==\s*['"]__main__['"]:/.test(text)) return 'Python';
+    if (/from\s+\w+\s+import\s+\w+|import\s+[\w\.]+(?:\s+as\s+\w+)?$/.test(text)) return 'Python'; 
+    if (/print\s*\(/.test(text) && !text.includes(';') && !text.includes('System.out')) return 'Python';
+    
+    // JavaScript
+    if (/console\.log|const\s+\w+|let\s+\w+|function\s+\w+\s*\(|=>|import\s+.*?from/.test(text)) return 'JavaScript';
+
+    return null;
+  };
+
+  const handleCodeChange = (newCode: string) => {
+    setCode(newCode);
+    
+    // Reset to Auto-detect if code is empty
+    if (!newCode.trim()) {
+      setLanguage('Auto-detect');
+      // Also clear image if code is emptied
+      setImageFile(null);
+      setImagePreview(null);
+      return;
+    }
+    
+    // Auto-detect language if currently unset or set to Auto-detect
+    if (language === 'Auto-detect' || language === 'unknown') {
+      const detected = detectLanguage(newCode);
+      if (detected) {
+        setLanguage(detected);
+      }
+    }
+  };
   
   // Helper for Math Mode detection
   const checkMathMode = (text: string) => {
-    // If specific language selected, assume code
-    if (language !== "Auto-detect") return false;
+    if (language !== "Auto-detect" && language !== "unknown") return false;
     
-    // Check for math symbols and numbers
     const hasMath = /[\+\-\*\/^=]/.test(text) && /\d/.test(text);
-    
-    // Enhanced keyword list to include R (<-), Python (print, if, else), and general syntax ({, }, ;)
     const hasKeywords = /(def|class|function|var|let|const|return|import|include|public|static|void|console\.|System\.|print|println|if|else|for|while|try|catch|<-|=>|{|}|;)/.test(text);
     
     return hasMath && !hasKeywords;
@@ -290,6 +335,8 @@ const App: React.FC = () => {
   const clearImage = () => {
     setImageFile(null);
     setImagePreview(null);
+    setCode("");
+    setLanguage('Auto-detect');
   };
   
   const extractCode = async (file: File) => {
@@ -319,8 +366,6 @@ const App: React.FC = () => {
           else if (detected === 'cpp' || detected === 'c++') setLanguage('C++');
           else if (detected === 'js' || detected === 'javascript') setLanguage('JavaScript');
           else if (detected === 'java') setLanguage('Java');
-          // If detected is 'unknown' or something else, we do not update language
-          // so it remains on 'Auto-detect' (or whatever was previously selected).
         }
         
         setIsAnalyzing(false);
@@ -399,7 +444,6 @@ const App: React.FC = () => {
       // History update
       setHistory(prev => {
         const newHistory = [{code: currentCode, result, timestamp: Date.now()}, ...prev].slice(0, 5);
-        localStorage.setItem('codelens-history', JSON.stringify(newHistory));
         return newHistory;
       });
       
@@ -524,20 +568,17 @@ const App: React.FC = () => {
     const newHist = [...history];
     newHist.splice(index, 1);
     setHistory(newHist);
-    localStorage.setItem('codelens-history', JSON.stringify(newHist));
     showToast("Analysis deleted");
   };
   
   const handleClearHistory = () => {
-    // Removed confirmation prompt to ensure it works across all environments
     setHistory([]);
-    localStorage.removeItem('codelens-history');
     showToast("History cleared");
   };
   
   const setExample = () => {
     let targetLang = language;
-    if (targetLang === "Auto-detect") {
+    if (targetLang === "Auto-detect" || targetLang === "unknown") {
       targetLang = "R";
     }
     setLanguage(targetLang);
@@ -694,7 +735,7 @@ const App: React.FC = () => {
     <div className="w-full lg:w-[35%] flex flex-col gap-4">
       <InputPanel 
     code={code}
-    setCode={setCode}
+    setCode={handleCodeChange}
     language={language}
     setLanguage={setLanguage}
     mode={mode}
