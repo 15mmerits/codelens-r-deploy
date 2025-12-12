@@ -24,7 +24,7 @@ const App: React.FC = () => {
   const [collapsePracticeByDefault, setCollapsePracticeByDefault] = useState(false);
   const [showReasoningSteps, setShowReasoningSteps] = useState(true);
   
-  // Lazy init for fullscreen to ensure it defaults to FALSE (reverted) and respects localStorage immediately
+  // Lazy init for fullscreen to ensure it defaults to FALSE and respects localStorage immediately
   const [startInFullscreen, setStartInFullscreen] = useState(() => {
     const saved = localStorage.getItem('codelens-fullscreen');
     return saved !== null ? saved === 'true' : false;
@@ -65,7 +65,19 @@ const App: React.FC = () => {
   const [practiceCount, setPracticeCount] = useState(1);
   
   // State: History & Tabs
-  const [history, setHistory] = useState<Array<{code: string, result: AnalysisResult, timestamp: number}>>([]);
+  // Lazy init for history
+  const [history, setHistory] = useState<Array<{code: string, result: AnalysisResult, timestamp: number}>>(() => {
+    const saved = localStorage.getItem('codelens-history');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse history", e);
+        return [];
+      }
+    }
+    return [];
+  });
   const [activeTab, setActiveTab] = useState<'current' | 'history'>('current');
   const [toast, setToast] = useState<string | null>(null);
   
@@ -91,16 +103,7 @@ const App: React.FC = () => {
     if (savedReasoning !== null) setShowReasoningSteps(savedReasoning === 'true');
 
     // Note: startInFullscreen is handled via lazy useState init
-    
-    // Load history
-    const savedHistory = localStorage.getItem('codelens-history');
-    if (savedHistory) {
-      try {
-        setHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error("Failed to parse history", e);
-      }
-    }
+    // Note: history is handled via lazy useState init
   }, []);
   
   useEffect(() => {
@@ -516,12 +519,10 @@ const App: React.FC = () => {
   };
   
   const handleClearHistory = () => {
-    const confirmed = window.confirm("Clear all history? This cannot be undone.");
-    if (confirmed) {
-      setHistory([]);
-      localStorage.removeItem('codelens-history');
-      showToast("History cleared");
-    }
+    // Removed window.confirm to ensure the action always executes
+    setHistory([]);
+    localStorage.removeItem('codelens-history');
+    showToast("History cleared");
   };
   
   const setExample = () => {
@@ -796,7 +797,7 @@ const App: React.FC = () => {
                   </div>
                   <button 
                 onClick={(e) => handleDeleteHistory(e, idx)}
-                className="absolute right-3 top-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="absolute right-3 top-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                 title="Delete from history"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -806,6 +807,7 @@ const App: React.FC = () => {
             </div>
               <div className="mt-6 flex justify-center pb-4">
               <button 
+            type="button"
             onClick={handleClearHistory} 
             className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
             >
