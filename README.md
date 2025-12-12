@@ -23,7 +23,7 @@ Supported languages include **Python, R, JavaScript, Java, and C++**.
 
 ## [Try the App Now](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
 **You need Google Account only and it's Free to use**
-[@CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
+[CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
 
 ---
 
@@ -192,9 +192,9 @@ Coming soon —
 
 ---
 
-## Try the App Now 
+## [Try the App Now](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
 **You need Google Account only and it's Free to use**
-[@CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
+[CodeLens](https://ai.studio/apps/drive/1K-uRZa42HItpAB46x6rcv6_8Hgdsuo3H?fullscreenApplet=true)
 
 ---
 
@@ -225,9 +225,10 @@ Active Kaggle competitor (Top 400-1000 in Playground Series)
 
 GitHub: [@15mmerits](https://github.com/15mmerits)
 
-LinkedIn: [15mmerits](https://linkedin.com/in/15mmerits)
+LinkedIn: [@15mmerits](https://linkedin.com/in/15mmerits)
 
-Kaggle: [godofoutcasts](https://kaggle.com/godofoutcasts)
+Kaggle: [@godofoutcasts](https://kaggle.com/godofoutcasts)
+
 
 ---
 
