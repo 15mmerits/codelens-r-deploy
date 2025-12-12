@@ -24,11 +24,10 @@ Supported languages include **Python, R, JavaScript, Java, and C++**.
 **70% of new programmers quit in their first year** because error messages feel cryptic.  
 For example:
 
- numbers <-
-
-'for i in range(len(numbers) + 1):
+``numbers <-
+for i in range(len(numbers) + 1):
 print(numbers[i])
-IndexError: list index out of range '
+IndexError: list index out of range``
 
 This does not tell a beginner:
 - where the loop broke  
@@ -46,7 +45,7 @@ CodeLens shows *exactly* how your code ran and where it snapped.
 
 Example:
 
-START
+``START
   ↓
 i = 0
   ↓
@@ -57,7 +56,7 @@ numbers[i]           EXIT
   ↓
 i = i + 1
   ↓
-(loop back) ⟲
+(loop back) ⟲ ``
 
 This helps beginners see the bug in seconds.
 
