@@ -310,9 +310,19 @@ const App: React.FC = () => {
         }
         
         setCode(res.text);
-        if (res.language && res.language !== 'unknown') {
-          setLanguage(res.language);
+        
+        // Auto-detect language from OCR result and map to UI options
+        if (res.language) {
+          const detected = res.language.toLowerCase();
+          if (detected === 'r') setLanguage('R');
+          else if (detected === 'python') setLanguage('Python');
+          else if (detected === 'cpp' || detected === 'c++') setLanguage('C++');
+          else if (detected === 'js' || detected === 'javascript') setLanguage('JavaScript');
+          else if (detected === 'java') setLanguage('Java');
+          // If detected is 'unknown' or something else, we do not update language
+          // so it remains on 'Auto-detect' (or whatever was previously selected).
         }
+        
         setIsAnalyzing(false);
       };
     } catch (e: any) {
@@ -519,7 +529,7 @@ const App: React.FC = () => {
   };
   
   const handleClearHistory = () => {
-    // Removed window.confirm to ensure the action always executes
+    // Removed confirmation prompt to ensure it works across all environments
     setHistory([]);
     localStorage.removeItem('codelens-history');
     showToast("History cleared");
@@ -797,7 +807,7 @@ const App: React.FC = () => {
                   </div>
                   <button 
                 onClick={(e) => handleDeleteHistory(e, idx)}
-                className="absolute right-3 top-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                className="absolute right-3 top-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
                 title="Delete from history"
                 >
                   <Trash2 className="w-4 h-4" />
