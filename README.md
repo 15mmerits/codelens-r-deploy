@@ -26,11 +26,9 @@ For example:
 
  numbers <-
 
-for i in range(len(numbers) + 1):
-
+'for i in range(len(numbers) + 1):
 print(numbers[i])
-
-# IndexError: list index out of range 
+IndexError: list index out of range '
 
 This does not tell a beginner:
 - where the loop broke  
